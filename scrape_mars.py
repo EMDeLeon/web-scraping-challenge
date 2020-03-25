@@ -8,7 +8,7 @@ import time
 
 
 
-def scrape():
+def scrape_all():
     news  = scrape_news()
     return {
         'news_title': news_title,

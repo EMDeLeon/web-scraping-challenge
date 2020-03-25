@@ -1,24 +1,24 @@
 from flask import Flask, render_template
 import pymongo
-from scrape_mars import scrape
+from scrape_mars import scrape_all
 
 app = Flask(__name__)
 
 # # setup mongo connection
- conn = "mongodb://localhost:27017"
- client = pymongo.MongoClient(conn)
+conn="mongodb://localhost:27017"
+client = pymongo.MongoClient(conn)
 
 # # connect to mongo db and collection
-# db = client.store_inventory
-# produce = db.produce
+db = client.missiontomars
+mars = db.mars
 
 
 @app.route("/scrape")
-def scrape():
-    results = scrape()
+def scrape_all():
+    results = scrape_mars.scrape_all()
 
     # Update the Mongo database using update and upsert=True
-    mongo.db.collection.update({},results, upsert=True)
+    client.db.collection.update({},results, upsert=True)
 
     # Redirect back to home page
     return redirect("/")
@@ -29,13 +29,9 @@ def scrape():
 
 @app.route("/")
 def index():
-    return {}
-    # # write a statement that finds all the items in the db and sets it to a variable
-    # inventory = list(produce.find())
-    # print(inventory)
-
-    # # render an index.html template and pass it the data you retrieved from the database
-    # return render_template("index.html", inventory=inventory)
+        ##render an index.html template and pass it the data you retrieved from the database
+    mars=client.db.missiontomars.find_one()  #takes the last item in the table to return
+    return render_template("index.html", mars=mars)
 
 
 if __name__ == "__main__":
